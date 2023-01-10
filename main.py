@@ -64,6 +64,13 @@ def translate_to_text():
                 # if symbol is not "/" nor "|", then it is another symbol within letter
                 if symbol != "/" and symbol != "|" and symbol:
                     temp_result += symbol
+                # if last symbols are "/" or "|" then it is end of sentence
+                elif count == len(morse_code) - 1 and (
+                                morse_code[len(morse_code) - 2] == "/" or morse_code[len(morse_code) - 2] == "|"):
+                    pass
+                elif count == len(morse_code) and (
+                                morse_code[len(morse_code) - 1] == "/" or morse_code[len(morse_code) - 1] == "|"):
+                    pass
                 # if symbol is "/" or "|", then it is space
                 else:
                     # we have to find out if it is space between words or letters
@@ -101,7 +108,10 @@ def translate_to_morse():
                 # get key by value in dictionary
                 translation += list(alphabet.keys())[list(alphabet.values()).index(symbol)] + "/"
             else:
-                translation += "//"
+                translation += "/"
+        # end the morse code
+        translation += "/"
+
         print(translation)
         return translation
 
