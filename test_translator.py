@@ -42,11 +42,9 @@ class TestTranslate(unittest.TestCase):
         message = "...././.-../.-../---//"
         self.assertEqual(MorseCodeTranslator(message).text_or_morse(message), False)
 
-    # # This one does not work! Problem is in: self.letter = alphabet.get(self.temp_result). It returns NoneType.
-    # # However, I don't know why. This part of the code is in other tests too, and it works fine.
-    # def test_letter_translation(self):
-    #     temp_result = "-.-."
-    #     self.assertEqual(MorseCodeTranslator(temp_result).letter_translation(temp_result), "Translation: C")
+    def test_letter_translation(self):
+        temp_result = "-.-."
+        self.assertEqual(MorseCodeTranslator(temp_result).letter_translation(temp_result), "Translation: C")
 
 
 if __name__ == "__main__":
