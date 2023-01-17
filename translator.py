@@ -1,139 +1,158 @@
-from typing import Dict
-
-
-alphabet: Dict[str, str] = {
-    ".-": "A",   "-...": "B",   "-.-.": "C",
-    "-..": "D",   ".": "E",   "..-.":   "F",
-    "--.": "G",   "....": "H",   "----":   "CH",
-    "..": "I",   ".---": "J",   "-.-": "K",
-    ".-..": "L",   "--": "M",   "-.": "N",
-    "---": "O",   ".--.": "P",   "--.-": "Q",
-    ".-.": "R",   "...": "S",   "-": "T",
-    "..-": "U",   "...-": "V",   ".--": "W",
-    "-..-": "X",   "-.--": "Y",   "--..": "Z",
-    ".----": "1",   "..---": "2",   "...--": "3",
-    "....-": "4",   ".....": "5",   "-....": "6",
-    "--...": "7",   "---..": "8",   "----.": "9",
-    "-----": "0",   "..--..": "?",   "--..--": ",",
-    "--...-": "!",   ".-.-.-": ".",   ".--.-.": "@",
-    "-..-.": "/",   "-....-": "-",   "-.--.": "(",
-    "-.--.-": ")",   ".----.": "'",   ".-..-.": "\""
-}
+from typing import Dict, Final
 
 
 class MorseCodeTranslator:
+    """Translate Morse code into text and text into Morse code."""
 
-    def __init__(self, message: str):
-        self.message: str = message
+    ALPHABET: Final[Dict[str, str]] = {
+        ".-": "A",
+        "-...": "B",
+        "-.-.": "C",
+        "-..": "D",
+        ".": "E",
+        "..-.": "F",
+        "--.": "G",
+        "....": "H",
+        "----": "CH",
+        "..": "I",
+        ".---": "J",
+        "-.-": "K",
+        ".-..": "L",
+        "--": "M",
+        "-.": "N",
+        "---": "O",
+        ".--.": "P",
+        "--.-": "Q",
+        ".-.": "R",
+        "...": "S",
+        "-": "T",
+        "..-": "U",
+        "...-": "V",
+        ".--": "W",
+        "-..-": "X",
+        "-.--": "Y",
+        "--..": "Z",
+        ".----": "1",
+        "..---": "2",
+        "...--": "3",
+        "....-": "4",
+        ".....": "5",
+        "-....": "6",
+        "--...": "7",
+        "---..": "8",
+        "----.": "9",
+        "-----": "0",
+        "..--..": "?",
+        "--..--": ",",
+        "--...-": "!",
+        ".-.-.-": ".",
+        ".--.-.": "@",
+        "-..-.": "/",
+        "-....-": "-",
+        "-.--.": "(",
+        "-.--.-": ")",
+        ".----.": "'",
+        ".-..-.": '"',
+    }
+
+    def __init__(self, message_input: str):
+        self.message_input: str = message_input
         self.translation: str = "Translation: "
-        self.temp_result: str = ""
-        self.letter: str = ""
+        self.morse_type: int = 1
 
-    # Gets a part of Morse code and converts it into a letter.
-    def letter_translation(self, temp_result: str) -> str:
-        self.temp_result = temp_result
-        self.letter = alphabet.get(temp_result)
-        self.translation += self.letter
-        # Clear temporary result for another iteration.
-        self.temp_result = ""
+    @classmethod
+    def translate(cls, message_input: str) -> str:
+        """Translates text into Morse code or Morse code into text."""
+        translator: MorseCodeTranslator = cls(message_input)
+        translator._translate()
+        return translator.translation
+
+    def _translate(self) -> str:
+        """
+        Decides whether the input message_input is text or Morse code (and which type).
+        Runs translation accordingly.
+        """
+        if self._is_text():
+            self._translate_to_morse()
+        else:
+            if self._morse_type() == 1:
+                self._translate_from_morse_type_1()
+            elif self._morse_type() == 2:
+                self._translate_from_morse_type_2()
+            else:
+                self._translate_from_morse_type_3()
         return self.translation
 
-    # Decides whether the input message is text or Morse code and runs the translation accordingly.
-    # For testing purposes I added boolean variable.
-    def text_or_morse(self, message: str) -> bool:
-        self.message = message
-        dots = message.count(".")
-        dashes = message.count("-")
-        slashes = message.count("/")
-        if dots + dashes + slashes >= len(message) / 2:
-            is_text = False
-            self.translate_to_text(message)
+    def _is_text(self) -> bool:
+        """
+        Decides whether the input message_input is text. Returns "True" if yes. Returns "False" if it's a Morse code.
+        """
+        dots = self.message_input.count(".")
+        dashes = self.message_input.count("-")
+        slashes = self.message_input.count("/")
+        return dots + dashes + slashes <= len(self.message_input) / 2
+
+    def _morse_type(self) -> int:
+        """
+        Detect a Morse code type:
+        1: Words are divided by " / " and symbols are divided by " "
+        2: Words are divided by "//" and symbols are divided by "/"
+        3: Words are divided by "||" and symbols are divided by "|"
+        """
+        if " " in self.message_input:
+            morse_type = 1
         else:
-            is_text = True
-            self.translate_to_morse(message)
-        return is_text
-
-    # Translate Morse Code into text.
-    # Every iteration it tests if symbol is part of a space or part of a letter.
-    def translate_to_text(self, message: str) -> str:
-        try:
-            self.message = message
-            count: int = 0
-            spaces: int = message.count(" ")
-            double_slashes: int = message.count("//")
-
-            # Morse code format 1 (spaces between letters are " " and spaces between words are " / ")
-            if spaces > 0 and double_slashes == 0:
-                for symbol in message:
-                    count += 1
-                    # If symbol is part of a letter, it adds this symbol to current symbols expressing that letter.
-                    if symbol != " " and symbol != "/":
-                        self.temp_result += symbol
-                    # Tests if " " is space between words.
-                    # If so, it translates current symbols from previous iterations into a letter and adds a space.
-                    elif symbol == " " and message[count] == "/" and message[count+1] == " ":
-                        self.letter_translation(self.temp_result)
-                        self.translation += " "
-                    # Symbol is part of space between words from previous iterations and was already taken care of.
-                    elif symbol == "/" or (symbol == " " and message[count-2] == "/"):
-                        pass
-                    # Symbols forming a letter are completed and translated into that letter.
-                    else:
-                        self.letter_translation(self.temp_result)
-
-            # Morse code format 2 (spaces between letters are "/" and spaces between words are "//")
+            if "/" in self.message_input:
+                morse_type = 2
             else:
-                for symbol in message:
-                    count += 1
-                    # If symbol is part of a letter, it adds this symbol to current symbols expressing that letter.
-                    if symbol != "/" and symbol != "|" and symbol:
-                        self.temp_result += symbol
-                    # If last symbols are "/" or "|" then it is end of message.
-                    elif count == len(message) - 1 and (
-                            message[len(message) - 2] == "/" or message[len(message) - 2] == "|"):
-                        pass
-                    elif count == len(message) and (
-                            message[len(message) - 1] == "/" or message[len(message) - 1] == "|"):
-                        pass
-                    # Other cases are spaces ("/").
-                    # We have to find out if it is space between words or letters:
-                    else:
-                        # If previous symbol is also "/" or "|", then it is space between words
-                        if message[count - 2] == "/" or message[count - 2] == "|":
-                            self.translation += " "
-                        # Other cases it is space between letters. Current letter is completed and translated.
-                        else:
-                            self.letter_translation(self.temp_result)
+                morse_type = 3
+        return morse_type
 
-            # When loop is finished, we also need to finish translation of letter.
-            self.letter_translation(self.temp_result)
-            print(self.translation)
-            return self.translation
+    def _translate_to_morse(self) -> str:
+        """Translated text into Morse code."""
+        for char in self.message_input:
+            if char == " ":
+                self.translation += "/ "
+            else:
+                self.translation += (list(self.ALPHABET.keys())[list(self.ALPHABET.values()).index(char.upper())]) + " "
+        self.translation = self.translation[:-1]
+        return self.translation
 
-        except TypeError:
-            print("Incorrect symbols!")
+    def _translate_from_morse_type_1(self) -> str:
+        """Translates Morse code (type 1) into text."""
+        for word in self.message_input.split(" / "):
+            for letter in word.split(" "):
+                self.translation += self.ALPHABET.get(letter)
+            self.translation += " "
+        self.translation = self.translation[:-1]
+        return self.translation
 
-    # Translates text into Morse code.
-    def translate_to_morse(self, message: str) -> str:
-        try:
-            self.message = message
-            for symbol in message:
-                symbol: str = symbol.upper()
-                if symbol != " ":
-                    # Gets a key by value in dictionary.
-                    self.translation += list(alphabet.keys())[list(alphabet.values()).index(symbol)] + "/"
+    def _translate_from_morse_type_2(self) -> str:
+        """Translates Morse code (type 2) into text."""
+        for word in self.message_input.split("//"):
+            for letter in word.split("/"):
+                if letter == "":
+                    pass
                 else:
-                    self.translation += "/"
-            # End the morse code.
-            self.translation += "/"
+                    self.translation += self.ALPHABET.get(letter)
+            self.translation += " "
+        self.translation = self.translation[:-2]
+        return self.translation
 
-            print(self.translation)
-            return self.translation
-
-        except ValueError:
-            print("Incorrect symbols!")
+    def _translate_from_morse_type_3(self) -> str:
+        """Translates Morse code (type 3) into text."""
+        for word in self.message_input.split("||"):
+            for letter in word.split("|"):
+                if letter == "":
+                    pass
+                else:
+                    self.translation += self.ALPHABET.get(letter)
+            self.translation += " "
+        self.translation = self.translation[:-2]
+        return self.translation
 
 
 if __name__ == "__main__":
-    input_message: str = input("Enter a message: ")
-    MorseCodeTranslator(input_message).text_or_morse(input_message)
+    input_message: str = input("Enter message: ")
+    result = MorseCodeTranslator.translate(input_message)
+    print(result)

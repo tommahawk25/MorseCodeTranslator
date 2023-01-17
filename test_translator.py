@@ -4,47 +4,53 @@ from translator import MorseCodeTranslator
 
 class TestTranslate(unittest.TestCase):
 
-    def test_translate_to_text_format_1(self):
+    def test_translate_from_morse_type_1(self):
         message = ".... .. --..-- / .... --- .-- / .- .-. . / -.-- --- ..- ..--.."
-        self.assertEqual(MorseCodeTranslator(message).translate_to_text(message),
-                         "Translation: HI, HOW ARE YOU?")
+        self.assertEqual(
+            MorseCodeTranslator(message)._translate_from_morse_type_1(),
+            "Translation: HI, HOW ARE YOU?"
+        )
 
-    def test_translate_to_text_format_2a(self):
-        message = "....|..|--..--||....|---|.--||.-|.-.|.||-.--|---|..-|..--..||"
-        self.assertEqual(MorseCodeTranslator(message).translate_to_text(message),
-                         "Translation: HI, HOW ARE YOU?")
-
-    def test_translate_to_text_format_2b(self):
+    def test_translate_from_morse_type_2(self):
         message = "..../../--..--//..../---/.--//.-/.-././/-.--/---/..-/..--..//"
-        self.assertEqual(MorseCodeTranslator(message).translate_to_text(message),
-                         "Translation: HI, HOW ARE YOU?")
+        self.assertEqual(
+            MorseCodeTranslator(message)._translate_from_morse_type_2(),
+            "Translation: HI, HOW ARE YOU?"
+        )
 
-    def test_translate_to_text_format_2c(self):
-        message = "..../../--..--//..../---/.--//.-/.-././/-.--/---/..-/..--../"
-        self.assertEqual(MorseCodeTranslator(message).translate_to_text(message),
-                         "Translation: HI, HOW ARE YOU?")
-
-    def test_translate_to_text_format_2d(self):
-        message = "..../../--..--//..../---/.--//.-/.-././/-.--/---/..-/..--.."
-        self.assertEqual(MorseCodeTranslator(message).translate_to_text(message),
-                         "Translation: HI, HOW ARE YOU?")
+    def test_translate_from_morse_type_3(self):
+        message = "....|..|--..--||....|---|.--||.-|.-.|.||-.--|---|..-|..--..||"
+        self.assertEqual(
+            MorseCodeTranslator(message)._translate_from_morse_type_3(),
+            "Translation: HI, HOW ARE YOU?"
+        )
 
     def test_translate_to_morse(self):
         message = "HI, HOW ARE YOU?"
-        self.assertEqual(MorseCodeTranslator(message).translate_to_morse(message),
-                         "Translation: ..../../--..--//..../---/.--//.-/.-././/-.--/---/..-/..--..//")
+        self.assertEqual(
+            MorseCodeTranslator(message)._translate_to_morse(),
+            "Translation: .... .. --..-- / .... --- .-- / .- .-. . / -.-- --- ..- ..--.."
+        )
 
-    def test_message_is_text_1(self):
+    def test_detect_morse_type_1(self):
+        message = ".... . .-.. .-.. --- / .--- --- .... -."
+        self.assertEqual(MorseCodeTranslator(message)._morse_type(), 1)
+
+    def test_detect_morse_type_2(self):
+        message = "...././.-../.-../---//.---/---/..../-.//"
+        self.assertEqual(MorseCodeTranslator(message)._morse_type(), 2)
+
+    def test_detect_morse_type_3(self):
+        message = "....|.|.-..|.-..|---||.---|---|....|-.||"
+        self.assertEqual(MorseCodeTranslator(message)._morse_type(), 3)
+
+    def test_if_message_is_text_1(self):
         message = "HI, HOW ARE YOU?"
-        self.assertEqual(MorseCodeTranslator(message).text_or_morse(message), True)
+        self.assertEqual(MorseCodeTranslator(message)._is_text(), True)
 
-    def test_message_is_text_2(self):
+    def test_if_message_is_text_2(self):
         message = "...././.-../.-../---//"
-        self.assertEqual(MorseCodeTranslator(message).text_or_morse(message), False)
-
-    def test_letter_translation(self):
-        temp_result = "-.-."
-        self.assertEqual(MorseCodeTranslator(temp_result).letter_translation(temp_result), "Translation: C")
+        self.assertEqual(MorseCodeTranslator(message)._is_text(), False)
 
 
 if __name__ == "__main__":
