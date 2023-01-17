@@ -91,15 +91,12 @@ class MorseCodeTranslator:
         2: Words are divided by "//" and symbols are divided by "/"
         3: Words are divided by "||" and symbols are divided by "|"
         """
-        if " " in self.message_input:
-            morse_type = 1
+        if "/" in self.message_input and " " not in self.message_input:
+            morse_type = 2
+        elif "|" in self.message_input and " " not in self.message_input:
+            morse_type = 3
         else:
-            if "/" in self.message_input:
-                morse_type = 2
-            elif "|" in self.message_input:
-                morse_type = 3
-            else:
-                morse_type = 1
+            morse_type = 1
         return morse_type
 
     def _translate_to_morse(self) -> str:
