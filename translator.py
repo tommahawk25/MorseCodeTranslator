@@ -1,3 +1,4 @@
+import re
 from typing import Dict, Final
 
 
@@ -69,10 +70,10 @@ class MorseCodeTranslator:
 
     def _translate(self) -> str:
         """
-        Decides whether the input message_input is text or Morse code (and which type).
+        Decides whether the input message_input is text or Morse code (and which type of Morse code).
         Runs translation accordingly.
         """
-        if self._is_text():
+        if re.search("[a-zA-z]", self.message_input):
             self._translate_to_morse()
         else:
             if self._morse_type() == 1:
@@ -82,15 +83,6 @@ class MorseCodeTranslator:
             else:
                 self._translate_from_morse_type_3()
         return self.translation
-
-    def _is_text(self) -> bool:
-        """
-        Decides whether the input message_input is text. Returns "True" if yes. Returns "False" if it's a Morse code.
-        """
-        dots = self.message_input.count(".")
-        dashes = self.message_input.count("-")
-        slashes = self.message_input.count("/")
-        return dots + dashes + slashes <= len(self.message_input) / 2
 
     def _morse_type(self) -> int:
         """
@@ -104,8 +96,10 @@ class MorseCodeTranslator:
         else:
             if "/" in self.message_input:
                 morse_type = 2
-            else:
+            elif "|" in self.message_input:
                 morse_type = 3
+            else:
+                morse_type = 1
         return morse_type
 
     def _translate_to_morse(self) -> str:

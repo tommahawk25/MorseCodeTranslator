@@ -44,14 +44,6 @@ class TestTranslate(unittest.TestCase):
         message = "....|.|.-..|.-..|---||.---|---|....|-.||"
         self.assertEqual(MorseCodeTranslator(message)._morse_type(), 3)
 
-    def test_if_message_is_text_1(self):
-        message = "HI, HOW ARE YOU?"
-        self.assertEqual(MorseCodeTranslator(message)._is_text(), True)
-
-    def test_if_message_is_text_2(self):
-        message = "...././.-../.-../---//"
-        self.assertEqual(MorseCodeTranslator(message)._is_text(), False)
-
 
 if __name__ == "__main__":
     unittest.main()
