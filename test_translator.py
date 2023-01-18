@@ -44,6 +44,27 @@ class TestTranslate(unittest.TestCase):
         message = "....|.|.-..|.-..|---||.---|---|....|-.||"
         self.assertEqual(MorseCodeTranslator(message)._morse_type(), 3)
 
+    def test_translate_morse_letter(self):
+        message = ".-"
+        self.assertEqual(MorseCodeTranslator(message)._translate(), "Translation: A")
+
+    def test_translate_from_text_to_morse(self):
+        message = "HI, HOW ARE YOU?"
+        self.assertEqual(MorseCodeTranslator(message)._translate(),
+                         "Translation: .... .. --..-- / .... --- .-- / .- .-. . / -.-- --- ..- ..--..")
+
+    def test_translate_from_morse_type_1_to_text(self):
+        message = ".... .. --..-- / .... --- .-- / .- .-. . / -.-- --- ..- ..--.."
+        self.assertEqual(MorseCodeTranslator(message)._translate(), "Translation: HI, HOW ARE YOU?")
+
+    def test_translate_from_morse_type_2_to_text(self):
+        message = "..../../--..--//..../---/.--//.-/.-././/-.--/---/..-/..--..//"
+        self.assertEqual(MorseCodeTranslator(message)._translate(), "Translation: HI, HOW ARE YOU?")
+
+    def test_translate_from_morse_type_3_to_text(self):
+        message = "....|..|--..--||....|---|.--||.-|.-.|.||-.--|---|..-|..--..||"
+        self.assertEqual(MorseCodeTranslator(message)._translate(), "Translation: HI, HOW ARE YOU?")
+
 
 if __name__ == "__main__":
     unittest.main()
